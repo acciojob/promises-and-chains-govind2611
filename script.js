@@ -1,38 +1,42 @@
-//your JS code here. If required.
-function submitForm() {
-  const ageInput = document.getElementById("age");
-  const nameInput = document.getElementById("name");
-  
-  if (ageInput.value.trim() === "" || nameInput.value.trim() === "") {
-    alert("Please fill in both age and name");
-    return;
-  }
+function extractNameAndWelcome(object) {
+  const name = object.name;
+  alert(`Welcome, ${name}. You can vote.`);
+  return { name };
+}
 
-  const age = parseInt(ageInput.value.trim());
-  const name = nameInput.value.trim();
-  
-  const promise = new Promise((resolve, reject) => {
+function validateAge(age, name) {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (age >= 18) {
         resolve({ age, name });
       } else {
-        reject({ age, name });
+        reject(`Oh sorry ${name}. You aren't old enough.`);
       }
     }, 4000);
   });
-  
-  promise
-    .then(({ age, name }) => {
-      alert(`Welcome, ${name}. You can vote.`);
-      return age;
-    })
-    .then((age) => {
-      return { age };
-    })
-    .then((result) => {
-      alert(JSON.stringify(result));
-    })
-    .catch(({ age, name }) => {
-      alert(`Oh sorry ${name}. You aren't old enough.`);
-    });
 }
+
+const form = document.querySelector('form');
+const ageInput = document.getElementById('age');
+const nameInput = document.getElementById('name');
+const btn = document.getElementById('btn');
+
+btn.addEventListener('click', (event) => {
+  event.preventDefault();
+  
+  if (form.checkValidity()) {
+    const age = parseInt(ageInput.value);
+    const name = nameInput.value;
+    
+    validateAge(age, name)
+      .then(extractNameAndWelcome)
+      .then((object) => {
+        alert(`Final object: ${JSON.stringify(object)}`);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  } else {
+    alert('Please fill out all fields.');
+  }
+});
