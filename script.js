@@ -1,42 +1,35 @@
-function extractNameAndWelcome(object) {
-  const name = object.name;
-  alert(`Welcome, ${name}. You can vote.`);
-  return { name };
-}
+// Get references to the form elements
+const nameInput = document.getElementById('name');
+const ageInput = document.getElementById('age');
+const submitBtn = document.getElementById('btn');
 
-function validateAge(age, name) {
-  return new Promise((resolve, reject) => {
+// Add a listener to the form submission event
+submitBtn.addEventListener('click', (event) => {
+  event.preventDefault(); // Prevent the form from submitting normally
+
+  // Check if the inputs are valid
+  if (!nameInput.value || !ageInput.value) {
+    alert('Please enter valid details');
+    return;
+  }
+
+  // Create a promise that resolves after 4 seconds with an object
+  const delayPromise = new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (age >= 18) {
-        resolve({ age, name });
+      if (Number(ageInput.value) >= 18) {
+        resolve({ name: nameInput.value, age: Number(ageInput.value) });
       } else {
-        reject(`Oh sorry ${name}. You aren't old enough.`);
+        reject({ name: nameInput.value });
       }
     }, 4000);
   });
-}
 
-const form = document.querySelector('form');
-const ageInput = document.getElementById('age');
-const nameInput = document.getElementById('name');
-const btn = document.getElementById('btn');
-
-btn.addEventListener('click', (event) => {
-  event.preventDefault();
-  
-  if (form.checkValidity()) {
-    const age = parseInt(ageInput.value);
-    const name = nameInput.value;
-    
-    validateAge(age, name)
-      .then(extractNameAndWelcome)
-      .then((object) => {
-        alert(`Final object: ${JSON.stringify(object)}`);
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  } else {
-    alert('Please fill out all fields.');
-  }
+  // Handle the result of the promise
+  delayPromise
+    .then((data) => {
+      alert(`Welcome, ${data.name}. You can vote.`);
+    })
+    .catch((error) => {
+      alert(`Oh sorry ${error.name}. You aren't old enough.`);
+    });
 });
