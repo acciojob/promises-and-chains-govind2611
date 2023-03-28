@@ -7,11 +7,7 @@ const submitBtn = document.getElementById('btn');
 submitBtn.addEventListener('click', (event) => {
   event.preventDefault(); // Prevent the form from submitting normally
 
-  // Check if the inputs are valid
-  if (!nameInput.value || !ageInput.value) {
-    alert('Please enter valid details');
-    return;
-  }
+ 
 
   // Create a promise that resolves after 4 seconds with an object
   const delayPromise = new Promise((resolve, reject) => {
